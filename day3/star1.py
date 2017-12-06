@@ -16,12 +16,12 @@ def circular_coord(pos):
 
 
 def circular_coord_2(pos):
-    x = 1
+    x = 0
     y = 0
-    dir = 0
-    d = 3
-    dir_counter = 0
-    for p in range(2, pos):
+    dir = 3
+    d = 1
+    dir_counter = 1
+    for p in range(1, pos):
         dir_counter += 1
 
         if dir == 0:
@@ -33,10 +33,16 @@ def circular_coord_2(pos):
         elif dir == 3:
             x += 1
 
-        if dir_counter >= d-1:
+        if dir_counter >= d:
             dir = (dir + 1) % 4
             dir_counter = 0
 
-    return (x, y)
+            if dir == 3 or dir == 1:
+                d += 1
 
-print(circular_coord_2(9))
+    return x, y
+
+
+pos = circular_coord_2(361527)
+print("At pos " + str(pos) + " and distance " + str(abs(pos[0]) + abs(pos[1])))
+
