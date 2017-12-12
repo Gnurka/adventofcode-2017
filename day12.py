@@ -23,3 +23,20 @@ def find_connections(group, program, pipes):
 group0 = set()
 find_connections(group0, 0, pipes)
 print(len(group0), group0)
+
+
+# Star 2 - brute force
+groups = []
+for p in pipes:
+    group = set()
+    find_connections(group, p[0], pipes)
+
+    found = False
+    for g in groups:
+        if g == group:
+            found = True
+
+    if found is False:
+        groups.append(group)
+
+print(len(groups))
