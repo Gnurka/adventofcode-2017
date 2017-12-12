@@ -31,12 +31,7 @@ for p in pipes:
     group = set()
     find_connections(group, p[0], pipes)
 
-    found = False
-    for g in groups:
-        if g == group:
-            found = True
-
-    if found is False:
+    if group not in groups:
         groups.append(group)
 
 print(len(groups))
