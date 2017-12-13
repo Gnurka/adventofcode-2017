@@ -13,11 +13,16 @@ def find_connections(group, program, pipes):
 
     group.add(program)
 
+    found_pipes = []
     for p in pipes:
         if program == p[0]:
-            find_connections(group, p[1], pipes)
+            found_pipes.append(find_connections(group, p[1], pipes))
+            found_pipes.append(p)
         elif program == p[1]:
-            find_connections(group, p[0], pipes)
+            found_pipes.append(find_connections(group, p[0], pipes))
+            found_pipes.append(p)
+
+    return found_pipes
 
 
 group0 = set()
@@ -27,9 +32,10 @@ print(len(group0), group0)
 
 # Star 2 - brute force
 groups = []
-for p in pipes:
+while len(pipes) > 0:
+    p = pipes.pop(0)
     group = set()
-    find_connections(group, p[0], pipes)
+    found_pipes = find_connections(group, p[0], pipes)
 
     if group not in groups:
         groups.append(group)
