@@ -1,3 +1,5 @@
+from time import time
+
 with open('day13.txt') as fp:
     gates = [[int(x) for x in line.split(": ")] for line in fp]
 
@@ -66,6 +68,7 @@ def calc_severity(gates, delay, scanners):
 
 
 def star2(gates):
+    start_time = time()
     scanners = []
     init_scanners(scanners, gates)
 
@@ -73,10 +76,10 @@ def star2(gates):
     delay = 1
     while calc_severity(gates, delay, scanners) > 0:
         delay += 1
-        if delay % 1000 == 0:
-            print(delay)
+        if delay % 100000 == 0:
+            print("delay: %s time: %f seconds." % (delay, time() - start_time))
 
-    print(delay)
+    print("delay: %s time: %s seconds." % (delay, time() - start_time))
 
 #print(star1(example, 10))
 
