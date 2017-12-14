@@ -35,7 +35,7 @@ def knot_hash_arr(lengths):
             skip_length += 1
 
     dense = get_dense_hash(circle)
-    dense_hex = [hex(x)[2:] for x in dense]
+    dense_hex = [format(x, '02x') for x in dense]
     return "".join(dense_hex)
 
 
@@ -52,26 +52,50 @@ def star1(input):
     print(used)
 
 
-def find_next_region(memory):
-    return (0, 0)
+def find_next_region(row, col, memory):
+    for i, r in enumerate(memory):
+        try:
+            c = r.index(1)
+            return (i, c)
+        except:
+            pass
+
+    return None
 
 
-def mark_region(section_nr, i, memory):
-    pass
+def mark_region(region_nr, row, col, memory):
+    assert memory[row][col] == 1
+
+    memory[row][col] = region_nr
+
+    if col > 0 and memory[row][col-1] == 1:
+        mark_region(region_nr, row, col-1, memory)
+
+    if col < len(memory[row])-2 and memory[row][col+1] == 1:
+        mark_region(region_nr, row, col+1, memory)
+
+    if row > 0 and memory[row-1][col] == 1:
+        mark_region(region_nr, row-1, col, memory)
+
+    if row < len(memory)-2 and memory[row+1][col] == 1:
+        mark_region(region_nr, row+1, col, memory)
 
 
 def star2(input):
     memory = []
     for i in range(128):
         hash = knot_hash(input + "-" + str(i))
-        memory.append(list(str(bin(int(hash, 16))))[2:])
+        memory.append([int(x) for x in "".join([format(int(x, 16), '04b') for x in hash])])
 
-    region_nr = 0
-    i = find_next_region(memory)
-    while i > 0:
-        mark_region(region_nr, i, memory)
+    region_nr = 2
+    i = find_next_region(0, 0, memory)
+    while i is not None:
+        mark_region(region_nr, i[0], i[1], memory)
+        region_nr += 1
+        i = find_next_region(i[0], i[1], memory)
 
-    print(region_nr)
+    for row in memory:
+        print(row)
 
 
 #star1("ljoxqyyw")
