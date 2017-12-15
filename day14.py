@@ -47,18 +47,17 @@ def star1(input):
     used = 0
     for i in range(128):
         hash = knot_hash(input + "-" + str(i))
-        used += str(bin(int(hash, 16))).count('1')
+        #used += str(bin(int(hash, 16))).count('1')
+        used += [int(x) for x in "".join([format(int(x, 16), '04b') for x in hash])].count(1)
 
     print(used)
 
 
 def find_next_region(row, col, memory):
     for i, r in enumerate(memory):
-        try:
-            c = r.index(1)
-            return (i, c)
-        except:
-            pass
+        for j, c in enumerate(r):
+            if c == 1:
+                return (i, j)
 
     return None
 
@@ -71,13 +70,13 @@ def mark_region(region_nr, row, col, memory):
     if col > 0 and memory[row][col-1] == 1:
         mark_region(region_nr, row, col-1, memory)
 
-    if col < len(memory[row])-2 and memory[row][col+1] == 1:
+    if col < len(memory[row])-1 and memory[row][col+1] == 1:
         mark_region(region_nr, row, col+1, memory)
 
     if row > 0 and memory[row-1][col] == 1:
         mark_region(region_nr, row-1, col, memory)
 
-    if row < len(memory)-2 and memory[row+1][col] == 1:
+    if row < len(memory)-1 and memory[row+1][col] == 1:
         mark_region(region_nr, row+1, col, memory)
 
 
@@ -88,14 +87,18 @@ def star2(input):
         memory.append([int(x) for x in "".join([format(int(x, 16), '04b') for x in hash])])
 
     region_nr = 2
+    regions = 0
     i = find_next_region(0, 0, memory)
     while i is not None:
         mark_region(region_nr, i[0], i[1], memory)
         region_nr += 1
+        regions += 1
         i = find_next_region(i[0], i[1], memory)
 
-    for row in memory:
-        print(row)
+    #for row in memory:
+    #    print(row)
+
+    print(regions)
 
 
 #star1("ljoxqyyw")
