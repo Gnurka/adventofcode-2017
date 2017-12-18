@@ -70,17 +70,16 @@ class Program:
         self.queue = deque()
         self.row = 0
         self.sends = 0
-        self.other_program = None
         self.is_waiting = False
 
-    def exec(self):
+    def exec(self, receiver):
         while self.row < len(self.input):
             i = self.input[self.row]
             instruction = i.rstrip().split(" ")
 
             if instruction[0] == "snd":
                 val = self.get_reg(instruction[1])
-                self.other_program.queue.append(val)
+                receiver.queue.append(val)
                 self.sends += 1
                 #print("snd %d" % last_played)
             elif instruction[0] == "set":
@@ -95,10 +94,8 @@ class Program:
                 if len(self.queue) > 0:
                     val = self.queue.popleft()
                     self.set_reg(instruction[1], val)
-                    self.is_waiting = False
                     #print("rcv %s:%d" % (snd[0], snd[1]))
                 else:
-                    self.is_waiting = True
                     return
 
             if instruction[0] == "jgz":
@@ -129,21 +126,15 @@ class Program:
 def star2(input):
     p0 = Program(input, {'p': 0})
     p1 = Program(input, {'p': 1})
-    p0.other_program = p1
-    p1.other_program = p0
 
     while p0.is_alive() and p1.is_alive():
-        if p0.is_alive():
-            p0.exec()
+        p0.exec(receiver=p1)
+        p1.exec(receiver=p0)
 
-        if p1.is_alive():
-            p1.exec()
-
-        if p0.is_waiting and len(p0.queue) == 0 and p1.is_waiting and len(p1.queue) == 0:
+        if len(p0.queue) == 0 and len(p1.queue) == 0:
             break
 
-    print(p0.sends)
-    print(p1.sends)
+    print("p1 sends: %d" % p1.sends)
 
 
 
