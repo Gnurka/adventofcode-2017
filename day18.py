@@ -119,6 +119,7 @@ class Program:
 
         return self.registers[reg]
 
+
     def set_reg(self, reg, val):
         self.registers[reg] = val
 
