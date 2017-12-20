@@ -1,10 +1,12 @@
 import re
 
+
 class Particle:
     def __init__(self, pos, vel, acc):
         self.pos = pos
         self.vel = vel
         self.acc = acc
+        self.alive = True
 
 
 def get_vector(string):
@@ -30,6 +32,20 @@ with open('day20.txt') as fp:
         particles.append(Particle(pos, vel, acc))
 
 
+def check_collisions(particles):
+    alive_count = 0
+    for ai, a in enumerate(particles):
+        for bi, b in enumerate(particles):
+            if ai != bi and a.pos[0] == b.pos[0] and a.pos[1] == b.pos[1] and a.pos[2] == b.pos[2]:
+                a.alive = False
+                b.alive = False
+
+        if a.alive == True:
+            alive_count += 1
+
+    return alive_count
+
+
 for i in range(100000):
     min_index = 0
     min_dist = 1000000
@@ -43,4 +59,6 @@ for i in range(100000):
             min_dist = dist
             min_index = pi
 
-    print(min_dist, min_index)
+    alive = check_collisions(particles)
+
+    print(min_dist, min_index, alive)
