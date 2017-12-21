@@ -10,7 +10,7 @@ class Particle:
 
 
 def get_vector(string):
-    return [int(x) for x in string[1:-1].split(",")]
+    return [int(x) for x in string.split(",")]
 
 
 def vector_add(a, b):
@@ -24,7 +24,7 @@ def vector_add(a, b):
 with open('day20.txt') as fp:
     particles = []
     for line in fp:
-        pattern = re.compile('<.+?>')
+        pattern = re.compile('(?<=<).+?(?=>)')
         vectors = pattern.findall(line)
         pos = get_vector(vectors[0])
         vel = get_vector(vectors[1])
@@ -33,32 +33,23 @@ with open('day20.txt') as fp:
 
 
 def check_collisions(particles):
-    alive_count = 0
     for ai, a in enumerate(particles):
         for bi, b in enumerate(particles):
             if ai != bi and a.pos[0] == b.pos[0] and a.pos[1] == b.pos[1] and a.pos[2] == b.pos[2]:
                 a.alive = False
                 b.alive = False
 
-        if a.alive == True:
-            alive_count += 1
-
-    return alive_count
-
 
 for i in range(100000):
-    min_index = 0
-    min_dist = 1000000
-
-    for pi, p in enumerate(particles):
+    for p in particles:
         p.vel = vector_add(p.vel, p.acc)
         p.pos = vector_add(p.pos, p.vel)
 
-        dist = abs(p.pos[0]) + abs(p.pos[1]) + abs(p.pos[2])
-        if dist < min_dist:
-            min_dist = dist
-            min_index = pi
+    dist = [abs(p.pos[0]) + abs(p.pos[1]) + abs(p.pos[2]) for p in particles]
+    min_dist = min(dist)
+    min_index = dist.index(min_dist)
 
-    alive = check_collisions(particles)
+    check_collisions(particles)
+    alive = sum([1 for x in particles if x.alive is True])
 
     print(min_dist, min_index, alive)
