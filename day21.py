@@ -1,5 +1,6 @@
 import math
 
+
 def rotate_matrix(m):
     size = len(m)
     return [[row[size-1 - i] for row in m] for i in range(size)]
@@ -34,8 +35,14 @@ def match_rules(image, pattern):
                     image == flip_matrix_x(p) or
                     image == flip_matrix_y(p) or
                     image == rot1 or
+                    image == flip_matrix_x(rot1) or
+                    image == flip_matrix_y(rot1) or
                     image == rot2 or
-                    image == rot3
+                    image == flip_matrix_x(rot2) or
+                    image == flip_matrix_y(rot2) or
+                    image == rot3 or
+                    image == flip_matrix_x(rot3) or
+                    image == flip_matrix_y(rot3)
             ):
                 return i
 
@@ -81,12 +88,12 @@ with open('day21.txt') as fp:
 
 rules, results = parse_rules(input)
 
-for i in range(2):
+for i in range(18):
     pieces = []
-    if len(image) % 3 == 0:
-        pieces = divide_image(image, 3)
-    else:
+    if len(image) % 2 == 0:
         pieces = divide_image(image, 2)
+    else:
+        pieces = divide_image(image, 3)
 
     new_pieces = []
     for p in pieces:
@@ -94,6 +101,7 @@ for i in range(2):
         new_pieces.append(results[rule])
 
     image = merge_pieces(new_pieces)
+    print("Iteration %d, image size=%d" %(i+1, len(image)))
 
 
-print(sum([sum(x) for x in image]))
+print("Lights on: %d" % sum([sum(x) for x in image]))
